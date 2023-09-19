@@ -61,6 +61,7 @@ def on_connect(client, userdata, flags, rc):
         Connected = True
     else:
         # logger.error("Connection failed")
+        pass
 
 
 def on_message(client, userdata, message):
