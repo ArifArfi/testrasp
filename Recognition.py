@@ -1,7 +1,7 @@
 import base64
-import logging
+# import logging
 # LogUtil external file
-from LogUtil import LogUtil
+# from LogUtil import LogUtil
 import traceback
 import paho.mqtt.client as mqtt_client
 import paho.mqtt.publish as publish
@@ -30,15 +30,15 @@ from bs4 import BeautifulSoup
 
 base_url = "http://103.161.184.75:80/"
 
-LogUtil.setup_logging()
-logger = logging.getLogger(__name__)
+# LogUtil.setup_logging()
+# logger = logging.getLogger(__name__)
 counter: int = 0
 q = queue.Queue()
 
 
 # load the facenet model
 facenet_model = load_model('model-cnn-facerecognition-labelid.tflite')
-logger.info('Loaded Model')
+# logger.info('Loaded Model')
 
 
 def get_embedding(model, face):
@@ -56,17 +56,17 @@ def get_embedding(model, face):
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        logger.info("Connected to broker")
+        # logger.info("Connected to broker")
         global Connected
         Connected = True
     else:
-        logger.error("Connection failed")
+        # logger.error("Connection failed")
 
 
 def on_message(client, userdata, message):
     try:
-        logger.info("topic {}".format(message.topic))
-        logger.info("message {}".format(message.payload.decode()))
+        # logger.info("topic {}".format(message.topic))
+        # logger.info("message {}".format(message.payload.decode()))
 
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -74,13 +74,13 @@ def on_message(client, userdata, message):
         global counter
         counter += 1
         name_file = "{}".format(f'{counter:06}')  # zero padding
-        logger.info("current time: {} {} {}".format(now, fmt_hex, name_file))
+        # logger.info("current time: {} {} {}".format(now, fmt_hex, name_file))
 
         q.put(message.payload)
 
     except Exception as e:
         traceback.print_exc()
-        logger.error(e)
+        # logger.error(e)
 
 def get_labels_from_API():
 
@@ -102,15 +102,15 @@ def get_labels_from_API():
 def predict_image(name):
     labels = get_labels_from_API()
     if not labels:
-        logger.error("No labels found ")
+        # logger.error("No labels found ")
         return
 
-    logger.info('Thread %s: starting', name)
+    # logger.info('Thread %s: starting', name)
     global running
     running = True
     while running:
         if not q.empty():
-            logger.info('Size of queue: %d', q.qsize())
+            # logger.info('Size of queue: %d', q.qsize())
             msg_base64 = q.get()
 
             try:
@@ -129,7 +129,7 @@ def predict_image(name):
                 getindex = listHasil.index(getMax)
                 # print(f"Terprediksi label {labels[getindex]} dengan akurasi {getMax}")
                 title = '%s (%.3f)' % (labels[getindex], getMax)
-                logger.info(title)
+                # logger.info(title)
                 client.publish(topic=out_topic_face, payload=labels[getindex])
 
 
@@ -178,7 +178,7 @@ def predict_image(name):
                 pass
 
         sleep(0.1)
-    logger.info('Thread %s: finished', name)
+    # logger.info('Thread %s: finished', name)
 
 # mqtt address
 broker_address = "127.0.0.1"
@@ -198,24 +198,24 @@ thread = threading.Thread(target=predict_image, args=('Robot',))
 thread.start()
 
 try:
-    logger.info("Connecting to {} {}".format(broker_address, port))
+    # logger.info("Connecting to {} {}".format(broker_address, port))
     client.connect(broker_address, port)
     client.loop_start()
 except Exception as e:
     traceback.print_exc()
-    logger.error(e)
+    # logger.error(e)
 
 while not Connected:
     time.sleep(0.1)
 client.subscribe(mqtt_sub)
-logger.info("Connected {} {}".format(broker_address, port))
+# logger.info("Connected {} {}".format(broker_address, port))
 
 try:
     while True:
         time.sleep(1)
 
 except KeyboardInterrupt:
-    logger.warning("exiting")
+    # logger.warning("exiting")
     global running
     running = False
     client.disconnect()
