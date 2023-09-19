@@ -7,16 +7,16 @@ import paho.mqtt.client as mqtt_client
 import paho.mqtt.publish as publish
 import time
 from datetime import datetime, date
-
+# import cv2
 
 import numpy as np  # linear algebra
-from mtcnn.mtcnn import MTCNN
+# from mtcnn.mtcnn import MTCNN
 from keras.models import load_model
 from PIL import Image
 
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import Normalizer
-from sklearn.svm import SVC
+# from sklearn.preprocessing import LabelEncoder
+# from sklearn.preprocessing import Normalizer
+# from sklearn.svm import SVC
 
 import io
 import queue
@@ -24,7 +24,6 @@ import threading
 from time import sleep
 from tensorflow.keras.preprocessing import image
 import json
-import mysql.connector
 
 import requests
 from bs4 import BeautifulSoup
